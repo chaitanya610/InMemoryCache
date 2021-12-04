@@ -1,2 +1,2 @@
 # InMemoryCache
-Implementation of in memory cache in C# Console Application
+Implementation of In Memory Cache in C# Console Application
