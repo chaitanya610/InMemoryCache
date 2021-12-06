@@ -17,7 +17,10 @@ namespace InMemoryCache
         public TKey Evict()
         {
             var key = _list.RemoveEnd();
-            _dictionary.Remove(key);
+            if (key != null)
+            {
+                _dictionary.Remove(key);
+            }
             return key;
         }
 
