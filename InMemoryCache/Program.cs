@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace InMemoryCache
 {
@@ -6,7 +7,9 @@ namespace InMemoryCache
     {
         static void Main(string[] args)
         {
-            var cache = new Cache<string, int>(new DictionaryBasedStorage<string, int>(3), new LRUEvictionPolicy<string>());
+            var services = ConfigureServices();
+            var cache = services.GetRequiredService<ICache<string, int>>();
+            // var cache = new Cache<string, int>(new DictionaryBasedStorage<string, int>(3), new LRUEvictionPolicy<string>());
 
             cache.Set("a", 1);
             cache.Set("b", 2);
@@ -22,6 +25,17 @@ namespace InMemoryCache
             Console.WriteLine(cache.Get("b"));
             Console.WriteLine(cache.Get("c"));
             Console.ReadKey();
+        }
+
+        private static ServiceProvider ConfigureServices()
+        {
+            var serviceProvider = new ServiceCollection()
+                .AddSingleton<IStorage<string, int>>(new DictionaryBasedStorage<string, int>(3))
+                .AddSingleton<IEvictionPolicy<string>, LRUEvictionPolicy<string>>()
+                .AddSingleton<ICache<string, int>, Cache<string, int>>()
+                .BuildServiceProvider();
+
+            return serviceProvider;
         }
     }
 }
